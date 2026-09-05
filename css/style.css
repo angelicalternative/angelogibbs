@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@500;600;700;800;900&display=swap');
 
 :root{
   --bg: #060607;
@@ -7,11 +7,11 @@
   --muted: #8c8c92;
   --accent: #ffb672;
   --border: rgba(245,241,234,0.1);
-  /* Univers isn't a free/Google font, so body text uses the closest
-     freely-available system stack (Helvetica Neue/Arial). Datatype is
-     the mono-ish grotesk used for all heading-level type. */
+  /* Body font is served by the Adobe Fonts (Typekit) kit linked in
+     <head> — swap in the real family name once we have it; using the
+     Helvetica fallback stack until then. */
   --font-body: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
-  --font-heading: 'Datatype', sans-serif;
+  --font-heading: 'Doto', sans-serif;
 }
 
 *{ box-sizing: border-box; }
