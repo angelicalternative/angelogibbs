@@ -22,11 +22,16 @@
       "meta": "Angelo By Angelo Studio",
       "tag": "Edition 02",
       "description": "Placeholder description — add concept, medium, and year here.",
-      "image": "",
+      "image": "images/uploads/dama/cover.jpg",
       "gradient": "radial-gradient(circle at 70% 30%, #3f2233, #0a0a0b 70%)",
       "order": 2,
       "featured": true,
-      "gallery": []
+      "gallery": [
+        "images/uploads/dama/gallery-1.jpg",
+        "images/uploads/dama/gallery-2.jpg",
+        "images/uploads/dama/gallery-3.jpg",
+        "images/uploads/dama/gallery-4.jpg"
+      ]
     },
     {
       "id": "pedro",
