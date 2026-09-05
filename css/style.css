@@ -7,10 +7,8 @@
   --muted: #8c8c92;
   --accent: #ffb672;
   --border: rgba(245,241,234,0.1);
-  /* Body font is served by the Adobe Fonts (Typekit) kit linked in
-     <head> — swap in the real family name once we have it; using the
-     Helvetica fallback stack until then. */
-  --font-body: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  /* Univers is served by the Adobe Fonts (Typekit) kit linked in <head>. */
+  --font-body: 'Univers', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
   --font-heading: 'Doto', sans-serif;
 }
 
