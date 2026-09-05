@@ -23,6 +23,17 @@
   const importInput = document.getElementById('importInput');
   const discardDraftBtn = document.getElementById('discardDraftBtn');
 
+  const publishBtn = document.getElementById('publishBtn');
+  const publishProgress = document.getElementById('publishProgress');
+  const publishSettingsBtn = document.getElementById('publishSettingsBtn');
+  const publishSettings = document.getElementById('publishSettings');
+  const ghToken = document.getElementById('ghToken');
+  const ghRepo = document.getElementById('ghRepo');
+  const ghBranch = document.getElementById('ghBranch');
+  const ghTokenStatus = document.getElementById('ghTokenStatus');
+  const ghSaveBtn = document.getElementById('ghSaveBtn');
+  const ghForgetBtn = document.getElementById('ghForgetBtn');
+
   const editorView = document.getElementById('editorView');
   const editorStatus = document.getElementById('editorStatus');
   const backToListBtn = document.getElementById('backToListBtn');
@@ -161,6 +172,183 @@
       }
     }, 300);
   }
+
+  // ---------- Publish to GitHub ----------
+  const GH_TOKEN_KEY = 'angelo_admin_gh_token';
+  const GH_REPO_KEY = 'angelo_admin_gh_repo';
+  const GH_BRANCH_KEY = 'angelo_admin_gh_branch';
+  const DEFAULT_GH_REPO = 'angelicalternative/angelogibbs';
+  const DEFAULT_GH_BRANCH = 'main';
+  const GH_API = 'https://api.github.com';
+
+  function loadGhConfig() {
+    return {
+      token: localStorage.getItem(GH_TOKEN_KEY) || '',
+      repo: localStorage.getItem(GH_REPO_KEY) || DEFAULT_GH_REPO,
+      branch: localStorage.getItem(GH_BRANCH_KEY) || DEFAULT_GH_BRANCH,
+    };
+  }
+
+  function refreshGhSettingsPanel() {
+    const cfg = loadGhConfig();
+    ghRepo.value = cfg.repo;
+    ghBranch.value = cfg.branch;
+    ghToken.value = '';
+    ghTokenStatus.textContent = cfg.token
+      ? 'A token is currently saved for this browser.'
+      : 'No token saved yet — publishing will not work until you add one.';
+  }
+
+  publishSettingsBtn.addEventListener('click', () => {
+    refreshGhSettingsPanel();
+    publishSettings.hidden = !publishSettings.hidden;
+  });
+
+  ghSaveBtn.addEventListener('click', () => {
+    if (ghToken.value.trim()) localStorage.setItem(GH_TOKEN_KEY, ghToken.value.trim());
+    localStorage.setItem(GH_REPO_KEY, ghRepo.value.trim() || DEFAULT_GH_REPO);
+    localStorage.setItem(GH_BRANCH_KEY, ghBranch.value.trim() || DEFAULT_GH_BRANCH);
+    refreshGhSettingsPanel();
+    setStatus('Publish settings saved.');
+  });
+
+  ghForgetBtn.addEventListener('click', () => {
+    localStorage.removeItem(GH_TOKEN_KEY);
+    refreshGhSettingsPanel();
+    setStatus('GitHub token removed from this browser.');
+  });
+
+  async function ghRequest(repo, path, options = {}) {
+    const cfg = loadGhConfig();
+    if (!cfg.token) throw new Error('No GitHub token saved. Open Publish Settings and add one first.');
+    return fetch(`${GH_API}/repos/${repo}${path}`, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${cfg.token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        ...(options.headers || {}),
+      },
+    });
+  }
+
+  async function getFileSha(repo, path, branch) {
+    const res = await ghRequest(repo, `/contents/${path}?ref=${encodeURIComponent(branch)}`);
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`Could not check existing file ${path} (${res.status})`);
+    const json = await res.json();
+    return json.sha;
+  }
+
+  async function putFile(repo, path, base64Content, message, branch) {
+    const sha = await getFileSha(repo, path, branch);
+    const body = { message, content: base64Content, branch };
+    if (sha) body.sha = sha;
+    const res = await ghRequest(repo, `/contents/${path}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(`Failed to save ${path}: ${err.message || res.status}`);
+    }
+    return res.json();
+  }
+
+  function isDataUrl(str) {
+    return typeof str === 'string' && str.startsWith('data:');
+  }
+
+  function dataUrlParts(dataUrl) {
+    const match = /^data:([^;]+);base64,([\s\S]*)$/.exec(dataUrl);
+    return match ? { mime: match[1], base64: match[2] } : null;
+  }
+
+  function extensionForMime(mime) {
+    if (mime === 'image/png') return 'png';
+    if (mime === 'image/webp') return 'webp';
+    return 'jpg';
+  }
+
+  function utf8ToBase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    const chunkSize = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+    }
+    return btoa(binary);
+  }
+
+  async function uploadDataUrlImage(repo, dataUrl, basePath, branch) {
+    const parts = dataUrlParts(dataUrl);
+    if (!parts) return dataUrl;
+    const path = `${basePath}.${extensionForMime(parts.mime)}`;
+    await putFile(repo, path, parts.base64, `Add image ${path}`, branch);
+    return path;
+  }
+
+  publishBtn.addEventListener('click', async () => {
+    const cfg = loadGhConfig();
+    if (!cfg.token) {
+      alert('Add a GitHub token in Publish Settings first.');
+      refreshGhSettingsPanel();
+      publishSettings.hidden = false;
+      return;
+    }
+    if (!confirm(`Publish current changes to ${cfg.repo} (${cfg.branch}) now?\nThis updates the live site.`)) return;
+
+    publishBtn.disabled = true;
+    publishProgress.hidden = false;
+    publishProgress.textContent = 'Preparing…';
+
+    try {
+      const working = JSON.parse(JSON.stringify(projects));
+      const totalImages = working.reduce((n, p) => {
+        const galleryCount = (p.gallery || []).filter(isDataUrl).length;
+        return n + (isDataUrl(p.image) ? 1 : 0) + galleryCount;
+      }, 0);
+      let uploaded = 0;
+
+      for (const p of working) {
+        const safeId = String(p.id || 'project').toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+
+        if (isDataUrl(p.image)) {
+          uploaded++;
+          publishProgress.textContent = `Uploading image ${uploaded} of ${totalImages}…`;
+          p.image = await uploadDataUrlImage(cfg.repo, p.image, `images/uploads/${safeId}/cover`, cfg.branch);
+        }
+
+        if (Array.isArray(p.gallery)) {
+          for (let i = 0; i < p.gallery.length; i++) {
+            if (isDataUrl(p.gallery[i])) {
+              uploaded++;
+              publishProgress.textContent = `Uploading image ${uploaded} of ${totalImages}…`;
+              p.gallery[i] = await uploadDataUrlImage(cfg.repo, p.gallery[i], `images/uploads/${safeId}/gallery-${i + 1}`, cfg.branch);
+            }
+          }
+        }
+      }
+
+      working.forEach((p, i) => { p.order = i + 1; });
+      publishProgress.textContent = 'Saving data/projects.json…';
+      const json = JSON.stringify({ projects: working }, null, 2);
+      await putFile(cfg.repo, 'data/projects.json', utf8ToBase64(json), 'Publish project updates from admin panel', cfg.branch);
+
+      projects = working;
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ projects, savedAt: Date.now() }));
+      renderList();
+      if (currentIndex !== -1) openEditor(currentIndex);
+      setStatus(`Published to ${cfg.repo} (${cfg.branch}) at ${new Date().toLocaleTimeString()}`);
+    } catch (e) {
+      console.error(e);
+      alert(`Publish failed: ${e.message}`);
+    } finally {
+      publishBtn.disabled = false;
+      publishProgress.hidden = true;
+    }
+  });
 
   // ---------- List view ----------
   function renderList() {

@@ -32,7 +32,9 @@
       <!-- ---------- List view ---------- -->
       <div id="listView">
         <div class="admin-toolbar">
-          <button id="addProjectBtn" class="admin-btn">+ Add Project</button>
+          <button id="publishBtn" class="admin-btn">Publish to Live Site</button>
+          <button id="publishSettingsBtn" class="admin-btn admin-btn-ghost">Publish Settings</button>
+          <button id="addProjectBtn" class="admin-btn admin-btn-ghost">+ Add Project</button>
           <button id="downloadBtn" class="admin-btn admin-btn-ghost">Download Backup</button>
           <label class="admin-btn admin-btn-ghost admin-file-btn">
             Import Backup
@@ -42,11 +44,44 @@
           <span id="statusText" class="admin-status"></span>
         </div>
 
+        <p id="publishProgress" class="admin-gallery-progress" hidden></p>
+
+        <div id="publishSettings" class="admin-publish-settings" hidden>
+          <div class="admin-field-row">
+            <div class="admin-field">
+              <label for="ghToken">GitHub token</label>
+              <input type="password" id="ghToken" placeholder="github_pat_..." autocomplete="off" />
+            </div>
+          </div>
+          <p id="ghTokenStatus" class="admin-media-hint"></p>
+          <div class="admin-field-row">
+            <div class="admin-field">
+              <label for="ghRepo">Repository (owner/repo)</label>
+              <input type="text" id="ghRepo" placeholder="angelicalternative/angelogibbs" />
+            </div>
+            <div class="admin-field admin-field-narrow">
+              <label for="ghBranch">Branch</label>
+              <input type="text" id="ghBranch" placeholder="main" />
+            </div>
+          </div>
+          <p class="admin-media-hint">
+            Create a <strong>fine-grained personal access token</strong> at
+            github.com &rarr; Settings &rarr; Developer settings &rarr; Personal access tokens,
+            scoped to just this repository with <strong>Contents: Read and write</strong> permission.
+            The token is saved only in this browser's local storage — it is never included in
+            downloaded backups and never sent anywhere except directly to api.github.com.
+          </p>
+          <div class="admin-field-row">
+            <button id="ghSaveBtn" class="admin-btn">Save Settings</button>
+            <button id="ghForgetBtn" class="admin-btn admin-btn-ghost">Forget Token</button>
+          </div>
+        </div>
+
         <p class="admin-note">
-          Changes here save to a local draft in <strong>this browser only</strong> — they do not
-          change the live site. When you're happy with your edits, click <strong>Download Backup</strong>
-          and send the file back (or hand it to Claude) to publish it as the site's real
-          <code>data/projects.json</code>.
+          Changes here save to a local draft in <strong>this browser only</strong> until you click
+          <strong>Publish to Live Site</strong>, which uploads your images as real files and commits
+          the updated <code>data/projects.json</code> straight to the repo. <strong>Download Backup</strong>
+          is still there as an extra safety copy if you ever want one.
         </p>
 
         <div id="projectGrid" class="admin-card-grid"></div>
