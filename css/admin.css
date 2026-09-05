@@ -21,10 +21,18 @@
 }
 .admin-home-link:hover{ color: var(--accent); }
 
+.admin-brand{
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.admin-brand-mark{ color: var(--accent); }
+
 .admin-title{
   font-family: 'Doto', sans-serif;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   font-size: 0.9rem;
 }
@@ -37,32 +45,73 @@
 
 /* ---------- Login ---------- */
 .admin-login{
-  max-width: 360px;
-  margin: 80px auto 0;
+  position: relative;
+  max-width: 420px;
+  margin: 8vh auto 0;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.admin-login::before{
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(255,182,114,0.16), transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.admin-login-mark{ color: var(--accent); margin-bottom: 20px; }
+
+.admin-login-eyebrow{ margin-bottom: 16px; }
+
+.admin-login-title{
+  font-family: 'Doto', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 6vw, 3.1rem);
+  text-transform: uppercase;
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  margin: 0 0 44px;
 }
 
 .admin-login-form{
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .admin-login-form label{
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .admin-login-form input{
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 14px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 12px 4px;
   color: var(--fg);
-  font-size: 0.95rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  transition: border-color 0.2s ease;
 }
-.admin-login-form input:focus{ outline: 1px solid var(--accent); }
+.admin-login-form input:focus{ outline: none; border-color: var(--accent); }
+
+.admin-login-form .admin-btn{ align-self: center; margin-top: 10px; padding: 12px 34px; }
 
 .admin-error{ color: #ff6b6b; font-size: 0.85rem; }
 
@@ -99,8 +148,30 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 22px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-toolbar-group{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-right: 22px;
+  border-right: 1px solid var(--border);
+}
+.admin-toolbar-group:last-of-type{ border-right: none; padding-right: 0; }
+
+.admin-toolbar-label{
+  font-family: 'Doto', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
 }
 
 .admin-status{
@@ -133,10 +204,11 @@
   background: var(--bg-alt);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 18px 20px;
+  padding: 20px 22px;
   margin-bottom: 20px;
   max-width: 640px;
 }
+.admin-publish-settings .eyebrow{ margin-bottom: 0; }
 .admin-publish-settings .admin-field-row{ align-items: end; }
 .admin-publish-settings input[type="password"]{
   width: 100%;
@@ -149,6 +221,9 @@
   font-family: inherit;
 }
 .admin-publish-settings input[type="password"]:focus{ outline: 1px solid var(--accent); }
+
+/* ---------- Section label above the project grid ---------- */
+.admin-section-label{ padding: 0 0 16px; }
 
 /* ---------- Shared field styling (used in the editor) ---------- */
 .admin-field label{
@@ -184,15 +259,16 @@
 }
 
 .admin-icon-btn{
-  background: var(--bg);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  border-radius: 6px;
-  width: 30px;
-  height: 30px;
+  background: rgba(6,6,7,0.75);
+  border: 1px solid rgba(245,241,234,0.18);
+  color: var(--fg);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   line-height: 1;
+  backdrop-filter: blur(2px);
 }
 .admin-icon-btn:hover{ color: var(--accent); border-color: var(--accent); }
 
@@ -205,37 +281,53 @@
 .admin-btn-danger:hover{ background: #ff6b6b; color: var(--bg); border-color: #ff6b6b; opacity: 1; }
 
 /* ---------- Project card grid (list view) ---------- */
+/* Mirrors the real .project-card treatment on the live site, so the
+   admin grid reads as a preview of the actual pages, not a generic
+   dashboard list. */
 .admin-card-grid{
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
 }
 
 .admin-card{
   position: relative;
+  aspect-ratio: 4/3;
+  min-height: 260px;
   border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
   background: var(--bg-alt);
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.35s ease, border-color 0.35s ease;
 }
 .admin-card:hover{
-  transform: translateY(-3px);
+  transform: translateY(-5px);
   border-color: rgba(255,182,114,0.4);
 }
 
 .admin-card-thumb{
-  width: 100%;
-  aspect-ratio: 4/3;
+  position: absolute;
+  inset: 0;
   background-size: cover;
   background-position: center;
-  border-bottom: 1px solid var(--border);
+  transition: transform 0.5s ease;
+}
+.admin-card:hover .admin-card-thumb{ transform: scale(1.06); }
+
+.admin-card::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(6,6,7,0.94) 12%, rgba(6,6,7,0.2) 62%, rgba(6,6,7,0.05));
+  pointer-events: none;
 }
 
 .admin-card-featured{
   position: absolute;
-  top: 10px; right: 10px;
+  top: 12px; left: 12px;
+  z-index: 2;
   font-size: 0.6rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -246,24 +338,32 @@
   border-radius: 999px;
 }
 
-.admin-card-body{ padding: 14px 16px 4px; }
+.admin-card-body{
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  padding: 20px 18px 16px;
+}
 
 .admin-card-tag{
-  display: block;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
+  display: inline-block;
+  font-size: 0.62rem;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: 8px;
+  border: 1px solid rgba(255,182,114,0.35);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
 }
 
 .admin-card-title{
   font-family: 'Doto', sans-serif;
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-weight: 800;
+  font-size: 1.3rem;
   text-transform: uppercase;
   margin: 0 0 4px;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 .admin-card-meta{
@@ -273,12 +373,17 @@
 }
 
 .admin-card-actions{
+  position: absolute;
+  top: 10px; right: 10px;
+  z-index: 3;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 6px;
-  padding: 12px 16px 16px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
+.admin-card:hover .admin-card-actions,
+.admin-card:focus-within .admin-card-actions{ opacity: 1; }
 
 /* ---------- Editor view ---------- */
 .admin-editor-header{
@@ -305,6 +410,8 @@
   gap: 10px;
 }
 
+.admin-media-eyebrow{ margin-bottom: 2px; }
+
 .admin-editor-thumb{
   width: 100%;
   aspect-ratio: 4/3;
@@ -313,13 +420,6 @@
   background-position: center;
   border: 1px solid var(--border);
   background-color: #111;
-}
-
-.admin-media-label{
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
 }
 
 .admin-media-hint{
@@ -369,12 +469,7 @@
   margin-bottom: 14px;
 }
 
-.admin-gallery-header > label{
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+.admin-gallery-eyebrow{ margin-bottom: 0; }
 
 .admin-gallery-upload-btns{
   display: flex;
@@ -460,14 +555,7 @@
   margin: 10px 0 0;
 }
 
-.admin-editor-description label{
-  display: block;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
+.admin-description-eyebrow{ margin-bottom: 12px; }
 
 .admin-big-editor{
   width: 100%;
