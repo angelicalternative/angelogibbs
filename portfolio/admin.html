@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Site Admin — Angelo Gibbs</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body class="admin-body">
+
+  <header class="admin-header">
+    <a href="index.html" class="admin-home-link">&larr; Back to site</a>
+    <span class="admin-title">Site Admin</span>
+    <button id="logoutBtn" class="admin-btn admin-btn-ghost" hidden>Log out</button>
+  </header>
+
+  <main class="admin-main">
+
+    <section id="loginGate" class="admin-login">
+      <form id="loginForm" class="admin-login-form">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required />
+        <button type="submit" class="admin-btn">Unlock</button>
+        <p id="loginError" class="admin-error" hidden>Incorrect password.</p>
+      </form>
+    </section>
+
+    <section id="cmsPanel" class="admin-cms" hidden>
+
+      <!-- ---------- List view ---------- -->
+      <div id="listView">
+        <div class="admin-toolbar">
+          <button id="addProjectBtn" class="admin-btn">+ Add Project</button>
+          <button id="downloadBtn" class="admin-btn admin-btn-ghost">Download Backup</button>
+          <label class="admin-btn admin-btn-ghost admin-file-btn">
+            Import Backup
+            <input type="file" id="importInput" accept="application/json" hidden />
+          </label>
+          <button id="discardDraftBtn" class="admin-btn admin-btn-ghost">Discard Local Draft</button>
+          <span id="statusText" class="admin-status"></span>
+        </div>
+
+        <p class="admin-note">
+          Changes here save to a local draft in <strong>this browser only</strong> — they do not
+          change the live site. When you're happy with your edits, click <strong>Download Backup</strong>
+          and send the file back (or hand it to Claude) to publish it as the site's real
+          <code>data/projects.json</code>.
+        </p>
+
+        <div id="projectGrid" class="admin-card-grid"></div>
+      </div>
+
+      <!-- ---------- Editor view (one project, opened by clicking a card) ---------- -->
+      <div id="editorView" class="admin-editor" hidden>
+        <div class="admin-editor-header">
+          <button id="backToListBtn" class="admin-btn admin-btn-ghost">&larr; Back to Projects</button>
+          <span id="editorStatus" class="admin-status"></span>
+          <button id="editorDeleteBtn" class="admin-btn admin-btn-danger">Delete Project</button>
+        </div>
+
+        <div class="admin-editor-body">
+          <div class="admin-editor-media">
+            <label class="admin-media-label">Preview Image</label>
+            <div id="editorThumb" class="admin-editor-thumb"></div>
+            <label class="admin-btn admin-btn-ghost admin-file-btn admin-editor-upload">
+              Upload Image
+              <input type="file" id="editorImageFile" accept="image/*" hidden />
+            </label>
+            <input type="url" id="editorImageUrl" placeholder="or paste an image URL" />
+            <p class="admin-media-hint">Used for the project card and the home page showcase.</p>
+          </div>
+
+          <div class="admin-editor-fields">
+            <div class="admin-field-row">
+              <div class="admin-field">
+                <label for="fTitle">Title</label>
+                <input type="text" id="fTitle" />
+              </div>
+              <div class="admin-field admin-field-narrow">
+                <label for="fYear">Year</label>
+                <input type="text" id="fYear" />
+              </div>
+            </div>
+            <div class="admin-field-row">
+              <div class="admin-field admin-field-narrow">
+                <label for="fGroup">Group</label>
+                <select id="fGroup">
+                  <option value="editions">Angelo By Angelo (Editions)</option>
+                  <option value="external">External</option>
+                </select>
+              </div>
+              <div class="admin-field">
+                <label for="fTag">Tag / badge</label>
+                <input type="text" id="fTag" placeholder="e.g. Edition 03 · Newest" />
+              </div>
+            </div>
+            <div class="admin-field">
+              <label for="fMeta">Meta line</label>
+              <input type="text" id="fMeta" placeholder="e.g. Angelo By Angelo Studio" />
+            </div>
+            <div class="admin-field">
+              <label class="admin-checkbox"><input type="checkbox" id="fFeatured" /> Featured on home</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-editor-gallery">
+          <div class="admin-gallery-header">
+            <label>Gallery &mdash; the full collage of images for this project</label>
+            <div class="admin-gallery-upload-btns">
+              <label class="admin-btn admin-btn-ghost admin-file-btn">
+                + Add Images
+                <input type="file" id="galleryFileInput" accept="image/*" multiple hidden />
+              </label>
+              <label class="admin-btn admin-btn-ghost admin-file-btn">
+                + Upload Folder
+                <input type="file" id="galleryFolderInput" webkitdirectory directory multiple hidden />
+              </label>
+            </div>
+          </div>
+          <div id="galleryGrid" class="admin-gallery-grid"></div>
+          <p class="admin-gallery-empty" id="galleryEmpty">No gallery images yet — add a few above, or upload a whole export folder (e.g. from Lightroom) at once.</p>
+          <p id="galleryProgress" class="admin-gallery-progress" hidden></p>
+          <p class="admin-gallery-hint">Drag a thumbnail to reorder. "Set Cover" makes that image the preview image above. Images are automatically resized for the web (max 1600px, so a full folder of exports won't blow past browser storage).</p>
+        </div>
+
+        <div class="admin-editor-description">
+          <label for="fDescription">Description</label>
+          <textarea id="fDescription" class="admin-big-editor" placeholder="Write the project description, concept, credits..."></textarea>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="js/projects-data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
