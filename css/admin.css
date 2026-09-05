@@ -30,7 +30,7 @@
 .admin-brand-mark{ color: var(--accent); }
 
 .admin-title{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -73,7 +73,7 @@
 .admin-login-eyebrow{ margin-bottom: 16px; }
 
 .admin-login-title{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 900;
   font-size: clamp(2rem, 6vw, 3.1rem);
   text-transform: uppercase;
@@ -125,7 +125,7 @@
   color: var(--bg);
   border: 1px solid var(--accent);
   border-radius: 999px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -165,7 +165,7 @@
 .admin-toolbar-group:last-of-type{ border-right: none; padding-right: 0; }
 
 .admin-toolbar-label{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -358,7 +358,7 @@
 }
 
 .admin-card-title{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   font-size: 1.3rem;
   text-transform: uppercase;
@@ -565,7 +565,7 @@
   border-radius: 12px;
   padding: 26px;
   color: var(--fg);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 1.05rem;
   line-height: 1.75;
   resize: vertical;

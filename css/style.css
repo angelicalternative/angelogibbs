@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Doto:wght@500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&display=swap');
 
 :root{
   --bg: #060607;
@@ -7,6 +7,11 @@
   --muted: #8c8c92;
   --accent: #ffb672;
   --border: rgba(245,241,234,0.1);
+  /* Univers isn't a free/Google font, so body text uses the closest
+     freely-available system stack (Helvetica Neue/Arial). Datatype is
+     the mono-ish grotesk used for all heading-level type. */
+  --font-body: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  --font-heading: 'Datatype', sans-serif;
 }
 
 *{ box-sizing: border-box; }
@@ -16,7 +21,7 @@ body{
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -43,7 +48,7 @@ img{ max-width: 100%; display: block; }
 
 .te-brand-name{
   display: block;
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   font-size: 1.15rem;
   line-height: 1.08;
@@ -189,7 +194,7 @@ main{
 }
 
 .page-header h1{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 900;
   font-size: clamp(2.4rem, 7vw, 5rem);
   text-transform: uppercase;
@@ -205,7 +210,7 @@ main{
 
 .eyebrow{
   display: inline-block;
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   color: var(--accent);
   font-size: 0.8rem;
@@ -241,7 +246,7 @@ main{
 }
 
 .hero-hint{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 500;
   font-size: 0.8rem;
   letter-spacing: 0.25em;
@@ -266,7 +271,7 @@ main{
   max-width: 90vw;
   padding: 0 6px;
   text-align: center;
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   font-size: clamp(1.05rem, 3.2vw, 1.9rem);
   letter-spacing: 0.18em;
@@ -289,7 +294,7 @@ main{
   background: var(--bg); /* solid plate so it stays legible over the lit grid */
   border: 1px solid var(--accent);
   border-radius: 999px;
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   font-size: 0.8rem;
   letter-spacing: 0.15em;
@@ -361,7 +366,7 @@ main{
 }
 
 .showcase-title{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   font-size: clamp(1.9rem, 6.5vw, 4.2rem);
   text-transform: uppercase;
@@ -379,7 +384,7 @@ main{
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   color: var(--accent);
   font-size: 0.8rem;
   letter-spacing: 0.15em;
@@ -451,7 +456,7 @@ main{
 }
 
 .project-info h3{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   font-size: 1.6rem;
   text-transform: uppercase;
@@ -524,7 +529,7 @@ main{
 }
 
 .collage-title{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   font-size: clamp(2rem, 5vw, 3.2rem);
   text-transform: uppercase;
@@ -647,7 +652,7 @@ main{
 }
 
 .contact-big{
-  font-family: 'Doto', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   font-size: clamp(1.8rem, 6vw, 3.4rem);
   text-transform: uppercase;
