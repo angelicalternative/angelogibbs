@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Site Admin — Angelo Gibbs</title>
+  <title>Studio Console — Angelo Gibbs</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/admin.css" />
 </head>
@@ -12,13 +12,19 @@
 
   <header class="admin-header">
     <a href="index.html" class="admin-home-link">&larr; Back to site</a>
-    <span class="admin-title">Site Admin</span>
+    <div class="admin-brand">
+      <svg class="admin-brand-mark" viewBox="0 0 40 40" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><polygon points="20,3 35,11.5 35,28.5 20,37 5,28.5 5,11.5"/><path d="M20 13l7 14M20 13l-7 14M15 22h10"/></svg>
+      <span class="admin-title">Studio Console</span>
+    </div>
     <button id="logoutBtn" class="admin-btn admin-btn-ghost" hidden>Log out</button>
   </header>
 
   <main class="admin-main">
 
     <section id="loginGate" class="admin-login">
+      <svg class="admin-login-mark" viewBox="0 0 40 40" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><polygon points="20,3 35,11.5 35,28.5 20,37 5,28.5 5,11.5"/><path d="M20 13l7 14M20 13l-7 14M15 22h10"/></svg>
+      <p class="eyebrow admin-login-eyebrow">Private &middot; Studio Access Only</p>
+      <h1 class="admin-login-title">Enter the<br>Console</h1>
       <form id="loginForm" class="admin-login-form">
         <label for="password">Password</label>
         <input type="password" id="password" name="password" autocomplete="current-password" required />
@@ -32,23 +38,69 @@
       <!-- ---------- List view ---------- -->
       <div id="listView">
         <div class="admin-toolbar">
-          <button id="addProjectBtn" class="admin-btn">+ Add Project</button>
-          <button id="downloadBtn" class="admin-btn admin-btn-ghost">Download Backup</button>
-          <label class="admin-btn admin-btn-ghost admin-file-btn">
-            Import Backup
-            <input type="file" id="importInput" accept="application/json" hidden />
-          </label>
-          <button id="discardDraftBtn" class="admin-btn admin-btn-ghost">Discard Local Draft</button>
+          <div class="admin-toolbar-group">
+            <span class="admin-toolbar-label">Publish</span>
+            <button id="publishBtn" class="admin-btn">Publish to Live Site</button>
+            <button id="publishSettingsBtn" class="admin-btn admin-btn-ghost">Settings</button>
+          </div>
+          <div class="admin-toolbar-group">
+            <span class="admin-toolbar-label">Projects</span>
+            <button id="addProjectBtn" class="admin-btn admin-btn-ghost">+ Add Project</button>
+          </div>
+          <div class="admin-toolbar-group">
+            <span class="admin-toolbar-label">Backup</span>
+            <button id="downloadBtn" class="admin-btn admin-btn-ghost">Download</button>
+            <label class="admin-btn admin-btn-ghost admin-file-btn">
+              Import
+              <input type="file" id="importInput" accept="application/json" hidden />
+            </label>
+            <button id="discardDraftBtn" class="admin-btn admin-btn-ghost">Discard Draft</button>
+          </div>
           <span id="statusText" class="admin-status"></span>
         </div>
 
+        <p id="publishProgress" class="admin-gallery-progress" hidden></p>
+
+        <div id="publishSettings" class="admin-publish-settings" hidden>
+          <p class="eyebrow">Publish Settings</p>
+          <div class="admin-field-row">
+            <div class="admin-field">
+              <label for="ghToken">GitHub token</label>
+              <input type="password" id="ghToken" placeholder="github_pat_..." autocomplete="off" />
+            </div>
+          </div>
+          <p id="ghTokenStatus" class="admin-media-hint"></p>
+          <div class="admin-field-row">
+            <div class="admin-field">
+              <label for="ghRepo">Repository (owner/repo)</label>
+              <input type="text" id="ghRepo" placeholder="angelicalternative/angelogibbs" />
+            </div>
+            <div class="admin-field admin-field-narrow">
+              <label for="ghBranch">Branch</label>
+              <input type="text" id="ghBranch" placeholder="main" />
+            </div>
+          </div>
+          <p class="admin-media-hint">
+            Create a <strong>fine-grained personal access token</strong> at
+            github.com &rarr; Settings &rarr; Developer settings &rarr; Personal access tokens,
+            scoped to just this repository with <strong>Contents: Read and write</strong> permission.
+            The token is saved only in this browser's local storage — it is never included in
+            downloaded backups and never sent anywhere except directly to api.github.com.
+          </p>
+          <div class="admin-field-row">
+            <button id="ghSaveBtn" class="admin-btn">Save Settings</button>
+            <button id="ghForgetBtn" class="admin-btn admin-btn-ghost">Forget Token</button>
+          </div>
+        </div>
+
         <p class="admin-note">
-          Changes here save to a local draft in <strong>this browser only</strong> — they do not
-          change the live site. When you're happy with your edits, click <strong>Download Backup</strong>
-          and send the file back (or hand it to Claude) to publish it as the site's real
-          <code>data/projects.json</code>.
+          Changes here save to a local draft in <strong>this browser only</strong> until you click
+          <strong>Publish to Live Site</strong>, which uploads your images as real files and commits
+          the updated <code>data/projects.json</code> straight to the repo. <strong>Download</strong>
+          is still there as an extra safety copy if you ever want one.
         </p>
 
+        <p class="section-label admin-section-label">Projects</p>
         <div id="projectGrid" class="admin-card-grid"></div>
       </div>
 
@@ -62,7 +114,7 @@
 
         <div class="admin-editor-body">
           <div class="admin-editor-media">
-            <label class="admin-media-label">Preview Image</label>
+            <label class="eyebrow admin-media-eyebrow">Preview Image</label>
             <div id="editorThumb" class="admin-editor-thumb"></div>
             <label class="admin-btn admin-btn-ghost admin-file-btn admin-editor-upload">
               Upload Image
@@ -108,7 +160,7 @@
 
         <div class="admin-editor-gallery">
           <div class="admin-gallery-header">
-            <label>Gallery &mdash; the full collage of images for this project</label>
+            <label class="eyebrow admin-gallery-eyebrow">Gallery &mdash; the full collage for this project</label>
             <div class="admin-gallery-upload-btns">
               <label class="admin-btn admin-btn-ghost admin-file-btn">
                 + Add Images
@@ -127,7 +179,7 @@
         </div>
 
         <div class="admin-editor-description">
-          <label for="fDescription">Description</label>
+          <label for="fDescription" class="eyebrow admin-description-eyebrow">Description</label>
           <textarea id="fDescription" class="admin-big-editor" placeholder="Write the project description, concept, credits..."></textarea>
         </div>
       </div>
