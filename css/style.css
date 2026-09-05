@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Doto:wght@500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@500;600;700;800;900&family=Datatype:wght@400;500;600;700&display=swap');
 
 :root{
   --bg: #060607;
@@ -10,6 +10,7 @@
   /* Univers is served by the Adobe Fonts (Typekit) kit linked in <head>. */
   --font-body: 'Univers', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
   --font-heading: 'Doto', sans-serif;
+  --font-datatype: 'Datatype', sans-serif;
 }
 
 *{ box-sizing: border-box; }
@@ -58,6 +59,7 @@ img{ max-width: 100%; display: block; }
 
 .te-brand-tag{
   margin: 8px 0 0;
+  font-family: var(--font-datatype);
   font-size: 0.66rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -372,6 +374,7 @@ main{
 }
 
 .showcase-year{
+  font-family: var(--font-datatype);
   font-size: 0.8rem;
   letter-spacing: 0.05em;
   color: var(--accent);
@@ -538,6 +541,10 @@ main{
   color: var(--muted);
   font-size: 0.9rem;
   margin: 0 0 20px;
+}
+
+.collage-year{
+  font-family: var(--font-datatype);
 }
 
 .collage-desc{

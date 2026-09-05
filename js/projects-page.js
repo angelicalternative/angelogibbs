@@ -35,7 +35,17 @@
   function openCollage(p) {
     collageTag.textContent = p.tag || '';
     collageTitle.textContent = p.title || '';
-    collageMeta.textContent = [p.year, p.meta].filter(Boolean).join(' · ');
+    collageMeta.innerHTML = '';
+    if (p.year) {
+      const yearEl = document.createElement('span');
+      yearEl.className = 'collage-year';
+      yearEl.textContent = p.year;
+      collageMeta.appendChild(yearEl);
+    }
+    if (p.meta) {
+      if (p.year) collageMeta.appendChild(document.createTextNode(' · '));
+      collageMeta.appendChild(document.createTextNode(p.meta));
+    }
     collageDesc.textContent = p.description || '';
 
     const images = [p.image, ...(p.gallery || [])].filter(Boolean);
