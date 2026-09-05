@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Angelo Gibbs</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="te-brand">
+      <a href="index.html" class="te-brand-name">Angelo<br><span>Gibbs</span></a>
+      <p class="te-brand-tag">Art Direction</p>
+    </div>
+
+    <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
+
+    <ul class="nav-links">
+      <li class="te-nav-item">
+        <a href="index.html" class="te-nav-label">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="2.4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2.1 2.1M15.9 15.9 18 18M18 6l-2.1 2.1M8.1 15.9 6 18"/></svg>
+          Home
+        </a>
+      </li>
+      <li class="te-nav-item">
+        <a href="projects.html" class="te-nav-label">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Projects
+        </a>
+        <ul class="te-nav-sub">
+          <li><a href="projects.html#unbound">unbound</a></li>
+          <li><a href="projects.html#dama">dama</a></li>
+          <li><a href="projects.html#remate">remate</a></li>
+        </ul>
+      </li>
+      <li class="te-nav-item">
+        <a href="about.html" class="te-nav-label">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+          About
+        </a>
+      </li>
+      <li class="te-nav-item">
+        <a href="contact.html" class="te-nav-label">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="5" width="19" height="14" rx="1.5"/><path d="M3 6.5l9 6.5 9-6.5"/></svg>
+          Contact
+        </a>
+        <ul class="te-nav-sub">
+          <li><a href="mailto:angelicalternative@gmail.com">email</a></li>
+          <li><a href="tel:+17869648892">phone</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="te-mark" aria-hidden="true">
+      <svg viewBox="0 0 40 40" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4"><polygon points="20,3 35,11.5 35,28.5 20,37 5,28.5 5,11.5"/><path d="M20 13l7 14M20 13l-7 14M15 22h10"/></svg>
+    </div>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <span class="eyebrow">About</span>
+      <h1>Angelo Gibbs</h1>
+      <p>Art Director</p>
+    </div>
+
+    <div class="about-layout">
+      <div class="about-photo">Photo placeholder<br />swap for a portrait</div>
+
+      <div class="about-text">
+        <p>
+          This is a placeholder bio. Replace it with a couple of paragraphs
+          about your background, how you approach art direction, and what
+          ties UNBOUND, Dama de la Primavera, Pedro contra Pedro, and
+          REMATE together conceptually.
+        </p>
+        <p>
+          Add a second paragraph here if you want more detail — process,
+          influences, or the mission behind Angelo By Angelo Studio.
+        </p>
+
+        <ul class="facts">
+          <li><span>Studio</span><span>Angelo By Angelo</span></li>
+          <li><span>Role</span><span>Art Director</span></li>
+          <li><span>Editions</span><span>3</span></li>
+          <li><span>Based</span><span>—</span></li>
+        </ul>
+
+        <p class="placeholder-note">Send over your real bio text and headshot whenever you're ready and I'll drop them in.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; <span id="year"></span> Angelo Gibbs</span>
+    <a href="mailto:angelicalternative@gmail.com">angelicalternative@gmail.com</a>
+    <a href="admin.html" class="footer-admin-link" aria-label="Site admin">&middot;</a>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script src="js/main.js"></script>
+</body>
+</html>
