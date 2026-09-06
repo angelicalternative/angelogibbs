@@ -10,6 +10,43 @@
   const nextEl = document.getElementById('projectNext');
   const nextTitleEl = document.getElementById('projectNextTitle');
 
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxClose = document.getElementById('lightboxClose');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
+  let lightboxImages = [];
+  let lightboxIndex = 0;
+
+  function openLightbox(images, index) {
+    lightboxImages = images;
+    lightboxIndex = index;
+    lightboxImg.src = lightboxImages[lightboxIndex];
+    lightbox.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  function showLightboxImage(delta) {
+    lightboxIndex = (lightboxIndex + delta + lightboxImages.length) % lightboxImages.length;
+    lightboxImg.src = lightboxImages[lightboxIndex];
+  }
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', () => showLightboxImage(-1));
+  lightboxNext.addEventListener('click', () => showLightboxImage(1));
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if (lightbox.hidden) return;
+    if (e.key === 'Escape') closeLightbox();
+    else if (e.key === 'ArrowLeft') showLightboxImage(-1);
+    else if (e.key === 'ArrowRight') showLightboxImage(1);
+  });
+
   function escapeAttr(str) {
     return String(str ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   }
@@ -66,6 +103,9 @@
       galleryEl.innerHTML = images.length
         ? images.map((src) => `<img src="${src}" alt="${escapeAttr(p.title || '')}" loading="lazy" />`).join('')
         : '';
+      galleryEl.querySelectorAll('img').forEach((img, i) => {
+        img.addEventListener('click', () => openLightbox(images, i));
+      });
 
       if (projects.length > 1) {
         const next = projects[(index + 1) % projects.length];
