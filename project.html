@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Angelo Gibbs — Art Director</title>
+  <title>Project — Angelo Gibbs</title>
   <link rel="icon" type="image/svg+xml" href="favicon-sun.svg" />
   <link rel="stylesheet" href="https://use.typekit.net/egj6ysj.css">
   <link rel="stylesheet" href="css/style.css" />
@@ -59,14 +59,33 @@
     </div>
   </nav>
 
-  <section class="hero" id="hero">
-    <canvas id="lightGrid"></canvas>
-    <div class="hero-role">Art Director &amp; Graphic Designer</div>
-    <a href="projects.html" class="hero-cta">Enter Projects</a>
-    <div class="hero-overlay">
-      <p class="hero-hint">move your cursor</p>
+  <main>
+    <div id="projectNotFound" class="page-header" hidden>
+      <span class="eyebrow">Not Found</span>
+      <h1>Project not found</h1>
+      <p>That project doesn't exist or may have been removed. <a href="projects.html">Back to Projects</a>.</p>
     </div>
-  </section>
+
+    <article id="projectArticle" class="project-page" hidden>
+      <div id="projectHero" class="project-hero"></div>
+
+      <div class="project-header">
+        <span id="projectTag" class="project-tag"></span>
+        <h1 id="projectTitle" class="project-title"></h1>
+        <p id="projectMeta" class="project-meta"></p>
+        <p id="projectDesc" class="project-desc"></p>
+      </div>
+
+      <div id="projectGallery" class="project-gallery"></div>
+
+      <div class="project-footer-nav">
+        <a href="projects.html" class="project-back">&larr; All Projects</a>
+        <a id="projectNext" href="projects.html" class="project-next" hidden>
+          Next &mdash; <span id="projectNextTitle"></span> <span class="arrow">&rarr;</span>
+        </a>
+      </div>
+    </article>
+  </main>
 
   <footer class="site-footer">
     <span>&copy; <span id="year"></span> Angelo Gibbs</span>
@@ -77,7 +96,7 @@
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
   <script src="js/projects-data.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/light-grid.js"></script>
+  <script src="js/project-page.js"></script>
   <script src="js/favicon.js"></script>
 </body>
 </html>

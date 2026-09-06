@@ -30,9 +30,10 @@
           Projects
         </a>
         <ul class="te-nav-sub">
-          <li><a href="projects.html#unbound">unbound</a></li>
-          <li><a href="projects.html#dama">dama</a></li>
-          <li><a href="projects.html#remate">remate</a></li>
+          <li><a href="project.html?id=unbound">unbound</a></li>
+          <li><a href="project.html?id=dama">dama</a></li>
+          <li><a href="project.html?id=pedro">pedro</a></li>
+          <li><a href="project.html?id=remate">remate</a></li>
         </ul>
       </li>
       <li class="te-nav-item">
@@ -62,8 +63,10 @@
     <div class="page-header">
       <span class="eyebrow">Full Archive</span>
       <h1>All Projects</h1>
-      <p>This page is a placeholder — the full project archive layout is coming later. For now, head back to <a href="projects.html">Projects</a> for selected work.</p>
+      <p>Every project, front to back.</p>
     </div>
+
+    <div class="projects-grid" id="projectsGrid"></div>
   </main>
 
   <footer class="site-footer">
@@ -73,7 +76,9 @@
   </footer>
 
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script src="js/projects-data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/all-projects-page.js"></script>
   <script src="js/favicon.js"></script>
 </body>
 </html>
