@@ -7,7 +7,6 @@
   // then paste the result below.
   const PASSWORD_HASH = '27808d3b1e09d545c01a59c523b5f759a8e34d83b70112a15f2f2f59cb4ae4fc';
   const SESSION_KEY = 'angelo_admin_unlocked';
-  const DRAFT_KEY = 'angelo_admin_draft_v1';
 
   const loginGate = document.getElementById('loginGate');
   const cmsPanel = document.getElementById('cmsPanel');
@@ -130,17 +129,72 @@
     loadProjects();
   }
 
+  // ---------- Local draft storage ----------
+  // IndexedDB, not localStorage: localStorage caps out around 5-10MB per
+  // origin, which a handful of full-res photo uploads blows straight
+  // through. When that write silently failed, later actions (including
+  // Publish) could end up working from a stale previously-saved draft
+  // instead of what was actually on screen. IndexedDB's quota is orders
+  // of magnitude larger, so a personal photo gallery never gets close to it.
+  const IDB_NAME = 'angelo_admin';
+  const IDB_STORE = 'drafts';
+  const IDB_KEY = 'draft_v1';
+
+  function openDraftDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => {
+        if (!req.result.objectStoreNames.contains(IDB_STORE)) {
+          req.result.createObjectStore(IDB_STORE);
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function idbGetDraft() {
+    const db = await openDraftDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(IDB_KEY);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function idbSetDraft(value) {
+    const db = await openDraftDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(value, IDB_KEY);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function idbClearDraft() {
+    const db = await openDraftDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(IDB_KEY);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
   // ---------- Data loading ----------
-  function loadProjects() {
-    const draft = localStorage.getItem(DRAFT_KEY);
-    if (draft) {
-      try {
-        const parsed = JSON.parse(draft);
-        projects = parsed.projects || [];
-        setStatus(`Local draft loaded (saved ${new Date(parsed.savedAt).toLocaleString()})`);
+  async function loadProjects() {
+    try {
+      const draft = await idbGetDraft();
+      if (draft) {
+        projects = draft.projects || [];
+        setStatus(`Local draft loaded (saved ${new Date(draft.savedAt).toLocaleString()})`);
         renderList();
         return;
-      } catch (e) { /* fall through to live data */ }
+      }
+    } catch (e) {
+      console.error('Could not read local draft', e);
     }
     window.ProjectsData.load().then((live) => {
       projects = live;
@@ -156,18 +210,19 @@
 
   function scheduleSave() {
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
+    saveTimer = setTimeout(async () => {
       projects.forEach((p, i) => { p.order = i + 1; });
       try {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify({ projects, savedAt: Date.now() }));
+        await idbSetDraft({ projects, savedAt: Date.now() });
         setStatus(`Local draft saved ${new Date().toLocaleTimeString()}`);
       } catch (e) {
-        setStatus('⚠ Browser storage is full — could not save this change locally');
+        console.error(e);
+        setStatus('⚠ Could not save this change locally');
         alert(
-          'Browser storage is full, so this change was NOT saved to your local draft ' +
-          '(it\'s still visible on screen right now, but will be lost on reload).\n\n' +
-          'Click "Download Backup" now to save what you have, then remove a few gallery ' +
-          'images or projects to free up room before continuing.'
+          'Your local draft could not be saved just now, so this change only exists on ' +
+          'screen right now and will be lost on reload.\n\n' +
+          'Click "Download Backup" to keep a copy, or use "Publish to Live Site" — ' +
+          'publishing reads directly from what\'s on screen, not from the local draft.'
         );
       }
     }, 300);
@@ -297,7 +352,17 @@
       publishSettings.hidden = false;
       return;
     }
-    if (!confirm(`Publish current changes to ${cfg.repo} (${cfg.branch}) now?\nThis updates the live site.`)) return;
+    const totalImages = projects.reduce((n, p) => {
+      const galleryCount = (p.gallery || []).filter(isDataUrl).length;
+      return n + (isDataUrl(p.image) ? 1 : 0) + galleryCount;
+    }, 0);
+    const titles = projects.map((p) => p.title || 'Untitled').join(', ');
+    const summary =
+      `Publish ${projects.length} project(s) to ${cfg.repo} (${cfg.branch})?\n\n` +
+      `Projects: ${titles}\n` +
+      `New images to upload: ${totalImages}\n\n` +
+      `Check this matches what you see in the admin panel, then confirm.`;
+    if (!confirm(summary)) return;
 
     publishBtn.disabled = true;
     publishProgress.hidden = false;
@@ -337,7 +402,7 @@
       await putFile(cfg.repo, 'data/projects.json', utf8ToBase64(json), 'Publish project updates from admin panel', cfg.branch);
 
       projects = working;
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ projects, savedAt: Date.now() }));
+      try { await idbSetDraft({ projects, savedAt: Date.now() }); } catch (e) { console.error(e); }
       renderList();
       if (currentIndex !== -1) openEditor(currentIndex);
       setStatus(`Published to ${cfg.repo} (${cfg.branch}) at ${new Date().toLocaleTimeString()}`);
@@ -450,9 +515,9 @@
     importInput.value = '';
   });
 
-  discardDraftBtn.addEventListener('click', () => {
+  discardDraftBtn.addEventListener('click', async () => {
     if (!confirm('Discard your local draft and reload the live data/projects.json?')) return;
-    localStorage.removeItem(DRAFT_KEY);
+    try { await idbClearDraft(); } catch (e) { console.error(e); }
     loadProjects();
   });
 
