@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Doto:wght@500;600;700;800;900&family=Datatype:wght@400;500;600;700&display=swap');
 
+/* Without this, any element that both sets its own `display` and uses
+   the `hidden` attribute stays visible: the browser's built-in
+   `[hidden]{display:none}` rule ties in specificity with a one-class
+   author rule, and author styles win the tie, so `hidden` gets
+   silently ignored (e.g. .project-next{display:inline-flex}). */
+[hidden]{ display: none !important; }
+
 :root{
   --bg: #060607;
   --bg-alt: #0d0e10;
@@ -514,11 +521,40 @@ main{
 .project-meta{
   color: var(--muted);
   font-size: 0.95rem;
-  margin: 0 0 24px;
+  margin: 0;
 }
 
 .project-year{
   font-family: var(--font-datatype);
+}
+
+/* Tight, tiled masonry -- packed like a real contact-sheet collage
+   rather than a single stacked column. */
+.project-gallery{
+  columns: 3 260px;
+  column-gap: 6px;
+  padding-bottom: 20px;
+}
+
+.project-gallery img{
+  width: 100%;
+  display: block;
+  margin-bottom: 6px;
+  break-inside: avoid;
+}
+
+@media (max-width: 900px){
+  .project-gallery{ columns: 2 220px; }
+}
+
+@media (max-width: 560px){
+  .project-gallery{ columns: 1; }
+}
+
+.project-description{
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 5vw 60px;
 }
 
 .project-desc{
@@ -527,18 +563,6 @@ main{
   font-size: 1.05rem;
   max-width: 68ch;
   margin: 0;
-}
-
-.project-gallery{
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding-bottom: 60px;
-}
-
-.project-gallery img{
-  width: 100%;
-  display: block;
 }
 
 .project-footer-nav{
