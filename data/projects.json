@@ -27,11 +27,14 @@
       "order": 2,
       "featured": true,
       "gallery": [
+        "images/uploads/dama/gallery-1.jpg",
+        "images/uploads/dama/gallery-2.jpg",
         "images/uploads/dama/gallery-3.jpg",
         "images/uploads/dama/gallery-4.jpg",
         "images/uploads/dama/gallery-5.jpg",
-        "images/uploads/dama/gallery-4.jpg",
-        "images/uploads/dama/gallery-5.jpg"
+        "images/uploads/dama/gallery-6.jpg",
+        "images/uploads/dama/gallery-7.jpg",
+        "images/uploads/dama/gallery-8.jpg"
       ]
     },
     {
