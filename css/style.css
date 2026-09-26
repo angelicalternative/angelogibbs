@@ -82,7 +82,7 @@ img{ max-width: 100%; display: block; }
   flex-wrap: wrap;
 }
 
-.te-nav-item{ display: flex; flex-direction: column; gap: 10px; min-width: 84px; }
+.te-nav-item{ position: relative; display: flex; flex-direction: column; gap: 10px; min-width: 84px; }
 
 .te-nav-label{
   display: inline-flex;
@@ -102,13 +102,37 @@ img{ max-width: 100%; display: block; }
 .te-nav-item:hover .te-nav-label svg,
 .te-nav-item.active .te-nav-label svg{ opacity: 1; transform: scale(1.08); }
 
+/* Hover/focus flyout on desktop -- kept out of normal flow so the header's
+   height stays fixed no matter how many projects the list has (it's
+   populated dynamically from data/projects.json, so it can grow). */
 .te-nav-sub{
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin: 8px 0 0;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  position: absolute;
+  top: 100%;
+  left: -14px;
+  min-width: 150px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  z-index: 10;
+}
+
+.te-nav-item:hover .te-nav-sub,
+.te-nav-item:focus-within .te-nav-sub{
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .te-nav-sub li a{
@@ -116,6 +140,7 @@ img{ max-width: 100%; display: block; }
   letter-spacing: 0.04em;
   color: var(--muted);
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .te-nav-sub li a:hover{ color: var(--fg); }
@@ -146,6 +171,20 @@ img{ max-width: 100%; display: block; }
 
 @media (max-width: 720px){
   .site-nav{ align-items: center; }
+  /* No hover on touch -- go back to an always-visible inline list. The
+     slide-out panel is full height with room to spare, unlike the fixed
+     top bar this flyout treatment is for. */
+  .te-nav-sub{
+    position: static;
+    margin: 4px 0 0;
+    padding: 0;
+    background: none;
+    border: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+  }
   .nav-links{
     position: fixed;
     top: 0; right: 0;
