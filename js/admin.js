@@ -315,6 +315,17 @@
     return typeof str === 'string' && str.startsWith('data:');
   }
 
+  // Gallery filenames must never be derived from array position: once a
+  // photo is deleted or reordered, a later upload can land on the same
+  // index an older, already-published photo used, silently overwriting
+  // that photo's file while both list entries still point at the same
+  // (now wrong) filename. A random id keeps every upload's filename
+  // permanent regardless of future reordering/deletion.
+  function randomId() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID().slice(0, 8);
+    return Math.random().toString(36).slice(2, 10);
+  }
+
   function dataUrlParts(dataUrl) {
     const match = /^data:([^;]+);base64,([\s\S]*)$/.exec(dataUrl);
     return match ? { mime: match[1], base64: match[2] } : null;
@@ -390,7 +401,7 @@
             if (isDataUrl(p.gallery[i])) {
               uploaded++;
               publishProgress.textContent = `Uploading image ${uploaded} of ${totalImages}…`;
-              p.gallery[i] = await uploadDataUrlImage(cfg.repo, p.gallery[i], `images/uploads/${safeId}/gallery-${i + 1}`, cfg.branch);
+              p.gallery[i] = await uploadDataUrlImage(cfg.repo, p.gallery[i], `images/uploads/${safeId}/gallery-${randomId()}`, cfg.branch);
             }
           }
         }
